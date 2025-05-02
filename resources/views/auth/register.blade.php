@@ -31,21 +31,21 @@
                           name="location"
                           label="Location"
                           :options="[
-                              'ghana' => 'Ghana',
-                              'nigeria' => 'Nigeria',
-                              'ivory_coast' => 'Ivory Coast',
-                              'senegal' => 'Senegal',
-                              'togo' => 'Togo',
-                              'benin' => 'Benin',
-                              'liberia' => 'Liberia',
-                              'sierra_leone' => 'Sierra Leone',
-                              'burkina_faso' => 'Burkina Faso',
-                              'mali' => 'Mali',
-                              'guinea' => 'Guinea',
-                              'guinea_bissau' => 'Guinea-Bissau',
-                              'gambia' => 'The Gambia',
-                              'cape_verde' => 'Cape Verde',
-                              'niger' => 'Niger'
+                              'Ghana' => 'Ghana',
+                              'Nigeria' => 'Nigeria',
+                              'Ivory Coast' => 'Ivory Coast',
+                              'Senegal' => 'Senegal',
+                              'Togo' => 'Togo',
+                              'Benin' => 'Benin',
+                              'Liberia' => 'Liberia',
+                              'Sierra Leone' => 'Sierra Leone',
+                              'Burkina Faso' => 'Burkina Faso',
+                              'Mali' => 'Mali',
+                              'Guinea' => 'Guinea',
+                              'Guinea Bissau' => 'Guinea-Bissau',
+                              'Gambia' => 'The Gambia',
+                              'Cape Verde' => 'Cape Verde',
+                              'Niger' => 'Niger'
                           ]"
                           required
                           :error="$errors->first('location')"
@@ -99,6 +99,4 @@
   </section>
 </x-layout>
 
-@push('scripts')
-<script src="{{ asset('js/country-phone.js') }}"></script>
-@endpush
+@vite(['resources/js/country-phone.js'])

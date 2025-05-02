@@ -34,11 +34,22 @@ class RegisterUserController extends Controller
             $new = request()->validate([
                 'first_name' => ['required', 'string', 'min:3','max:255'],
                 'last_name' => ['required', 'string', 'min:3','max:255'],
-                'phone' => ['required', 'max:15','string'],
+                'phone' => ['required', 'string'],
                 'location' => ['required', 'string'],
                 'email' => ['required', 'email', 'unique:users,email'],
                 'password' => ['required', 'string', 'confirmed']
             ]);
+            
+            // Additional phone validation
+            $phone = $new['phone'];
+            $phone = preg_replace('/[^0-9+]/', '', $phone); // Remove all non-numeric characters except +
+            
+            // Check if the phone number is valid
+            if (!preg_match('/^\+[0-9]{3}[0-9]{9}$/', $phone)) {
+                return back()->withErrors(['phone' => 'Please enter a valid phone number starting with country code (e.g., +233050123456)'])->withInput();
+            }
+            
+            $new['phone'] = $phone;
             
             $user = User::create($new);
             Auth::login($user);
