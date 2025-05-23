@@ -13,22 +13,7 @@ class Account extends Model
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory, HasUuids;
     
-    protected $casts = [
-        'balance' => 'decimal:2',
-        'password' => 'hashed',
-        'id' => 'string', // Cast the UUID to string
-    ];
-
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'account_number', 
-        'account_type',
-        'balance',
-        'password',
-        'email',
-        'user_id', 
-    ];
+    protected $table = null;
 
     /**
      * Get the route key for the model.
@@ -40,25 +25,14 @@ class Account extends Model
         return 'id';
     }
    
-    public static function generateAccountNumber()
+    public static function generateSavingsAccountNumber()
     {
-        return 'ACC' .'-'. strtoupper(Str::random(3)) . rand(10000, 99999);
+        return 'SAV' .'-'. strtoupper(Str::random(3)) . rand(10000, 99999);
     }
 
-    // account belongs to a user
-    public function user()
+    public static function generateCurrentAccountNumber()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    // account has many transactions
-    public function transactions()
-    {
-        return $this->hasMany(Transaction::class);
-    }
-
-    public function savings(){
-        return $this->hasMany(Savings::class);
+        return 'CURR' .'-'. strtoupper(Str::random(3)) . rand(10000, 99999);
     }
 
     public function updateBalance($amount, $type)

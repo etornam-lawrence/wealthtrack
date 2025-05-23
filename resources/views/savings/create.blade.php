@@ -48,13 +48,13 @@
                 </div>
 
                 <x-form-select
-                    name="account_id"
+                    name="savings_account_id"
                     label="Select Account"
                     :options="$accounts->mapWithKeys(function($account) {
-                        return [$account->id => $account->first_name . ' - ' . $account->account_number];
+                        return [$account->id => $account->alias . ' -  ' . $account->account_number];
                     })"
                     required
-                    :error="$errors->first('account_id')"
+                    :error="$errors->first('savings_account_id')"
                 />
 
                 <div>
@@ -109,9 +109,7 @@
                             placeholder="Enter amount per interval"
                         />
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
-                        Leave empty for manual savings or enter amount for scheduled savings
-                    </p>
+                    
                     <x-form-error name="amount_per_interval" />
                 </div>
 
@@ -144,19 +142,8 @@
                     <x-form-error name="end_date" />
                 </div>
 
-                <div class="flex items-center">
-                    <x-form-input 
-                        type="checkbox" 
-                        name="automatic" 
-                        id="automatic" 
-                        value="1" 
-                        {{ old('automatic') ? 'checked' : '' }} 
-                    />
-                    <x-form-label for="automatic" class="ml-2">Enable Automatic Savings</x-form-label>
-                </div>
-                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
-                    When enabled, the system will automatically deduct the specified amount from your account at the chosen interval
-                </p>
+                
+                
 
                 <div>
                     <x-form-label for="description">Description (Optional)</x-form-label>

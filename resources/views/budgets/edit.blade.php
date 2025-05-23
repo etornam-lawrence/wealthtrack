@@ -115,8 +115,7 @@
                       class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400">
                 <option value="">Select a status</option>
                 <option value="active" {{ (old('status', $budget->status) == 'active') ? 'selected' : '' }}>Active</option>
-                <option value="completed" {{ (old('status', $budget->status) == 'completed') ? 'selected' : '' }}>Completed</option>
-                <option value="cancelled" {{ (old('status', $budget->status) == 'cancelled') ? 'selected' : '' }}>Cancelled</option>
+                <option value="closed" {{ (old('status', $budget->status) == 'closed') ? 'selected' : '' }}>Closed</option>
               </select>
             </div>
 

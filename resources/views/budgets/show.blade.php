@@ -36,7 +36,7 @@
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
           <div class="flex justify-between items-start">
             <div>
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $budget->category }}</h2>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $budget->category }} - <a href="{{ route('accounts.current.show', $budget->currentAccount->id) }}"  class="text-indigo-600 dark:text-indigo-400 hover:underline">{{ $budget->currentAccount->account_number }}</a></h2>
               <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ ucfirst($budget->period) }}</p>
             </div>
             <div class="flex space-x-3">

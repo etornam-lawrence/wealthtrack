@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Account;
+use App\Models\CurrentAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +20,7 @@ class TransactionController extends Controller
     {
 
         $user = Auth::user();
-        $accounts = $user->accounts;
+        $accounts = $user->currentAccounts;
         if ($accounts->count() === 0) {
             
             return redirect()->route('accounts.create')->with('error', 'You must create an account before creating a transaction.');
@@ -41,7 +41,7 @@ class TransactionController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $accounts = $user->accounts;
+        $accounts = $user->currentAccounts;
         $budgets = $user->budgets;
         return view('transactions.create', compact('accounts', 'user','budgets'));
        
@@ -57,7 +57,7 @@ class TransactionController extends Controller
         $user = Auth::user();
         $validated = request()->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'account_id' => ['required', 'exists:accounts,id'],
+            'current_account_id' => ['required', 'exists:current_accounts,id'],
             'budget_id' => 'nullable|exists:budgets,id',
             'amount' => [
                 'required',
@@ -78,23 +78,23 @@ class TransactionController extends Controller
         ]);
 
         // 2. Get the account and check if it belongs to user
-        $account = Account::where('id', $validated['account_id'])
+        $account = CurrentAccount::where('id', $validated['current_account_id'])
                          ->where('user_id', $user->id)
                          ->first();
                          
         if (!$account) {
             Log::warning('Invalid account access attempt', [
                 'user_id' => $user->id,
-                'account_id' => $validated['account_id']
+                'current_account_id' => $validated['current_account_id']
             ]);
-            return back()->withErrors(['account_id' => 'Invalid account selected.']);
+            return back()->withErrors(['current_account_id' => 'Invalid account selected.']);
         }
 
         // 3. Check if withdrawal is possible
         if ($validated['transaction_type'] === 'withdrawal' && $account->balance < $validated['amount']) {
             Log::info('Insufficient funds for withdrawal', [
                 'user_id' => $user->id,
-                'account_id' => $account->id,
+                'current_account_id' => $account->id,
                 'balance' => $account->balance,
                 'amount' => $validated['amount']
             ]);
@@ -130,7 +130,7 @@ class TransactionController extends Controller
             Log::error('Transaction failed', [
                 'error' => $e->getMessage(),
                 'user_id' => $user->id,
-                'account_id' => $account->id,
+                'current_account_id' => $account->id,
                 'amount' => $validated['amount'],
                 'transaction_type' => $validated['transaction_type']
             ]);
@@ -141,35 +141,5 @@ class TransactionController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Transaction $transaction)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transaction $transaction)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transaction $transaction)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaction $transaction)
-    {
-        //
-    }
+    
 }

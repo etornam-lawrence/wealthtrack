@@ -63,9 +63,14 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
-    public function accounts()
+    public function currentAccounts()
     {
-        return $this->hasMany(Account::class);
+        return $this->hasMany(CurrentAccount::class);
+    }
+
+    public function savingsAccounts()
+    {
+        return $this->hasMany(SavingsAccount::class);
     }
 
     public function budgets()
@@ -73,12 +78,17 @@ class User extends Authenticatable
         return $this->hasMany(Budget::class);        
     }
 
-    public function savings(){
-        return $this->hasMany(Savings::class);
+    public function savingsPlans(){
+        return $this->hasMany(SavingsPlan::class);
     }
 
     public function review()
     {
         return $this->hasOne(Review::class);
+    }
+
+    public function Savings_transactions()
+    {
+        return $this->hasMany(SavingsTransaction::class);
     }
 }

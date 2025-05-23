@@ -7,16 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 class RegisterUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-
-        // return view('auth.regsiter');
-        
-    }
-
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -62,22 +53,7 @@ class RegisterUserController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        // return view('users', ['users'=>$user]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        return view('users.edit', ['user'=>$user]);
-    }
-
+    
     /**
      * Update the specified resource in storage.
      */
@@ -98,9 +74,11 @@ class RegisterUserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user, Request $request)
     {
         $user->delete();
+                $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect('users');
     }
 }

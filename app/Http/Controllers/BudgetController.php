@@ -16,25 +16,27 @@ class BudgetController extends Controller
 
     public function create()
     {
-        $accounts = Auth::user()->accounts()->get();
-        return view('budgets.create', compact('accounts'));
+        $accounts = Auth::user()->currentAccounts()->get();
+        $user = Auth::user();
+        return view('budgets.create', compact('accounts', 'user'));
     }
 
     public function store(Request $request)
     {
         $user = Auth::user();
         $validated = $request->validate([
-            'account_id' => 'required|exists:accounts,id',
+            'current_account_id' => 'required|exists:current_accounts,id',
+            'user_id' => 'required|exists:users,id',
             'category' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'period' => 'required|in:weekly,monthly,quarterly,yearly',
+            'period' => 'required|in:daily,weekly,monthly,quarterly,yearly',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string',
         ]);
 
         // Check if the account belongs to the authenticated user
-        $account = $user->accounts->firstWhere('id', $validated['account_id']);
+        $account = $user->currentAccounts->firstWhere('id', $validated['current_account_id']);
 
         if (!$account) {
             return back()->with('error', 'Selected account not found.');
@@ -47,7 +49,10 @@ class BudgetController extends Controller
                 'amount' => "Your account balance (GHS {$account->balance}) is less than the budget limit you set (GHS {$validated['amount']}). Please reduce the budget amount or choose a different account."
             ])->withInput();
         }
+
         // dd($validated);
+
+        $validated['status'] = 'active'; // Default status
         $user->budgets()->create($validated);
         
         return redirect()->route('budgets.index')
@@ -58,6 +63,7 @@ class BudgetController extends Controller
     public function show(Budget $budget)
     {
         $budget->load('transactions');
+        $budget->load('currentAccount');
         $remainigAmount = $budget->remaining_amount;
 
         // calculation to get current budget limit progress.
@@ -75,11 +81,11 @@ class BudgetController extends Controller
         $validated = $request->validate([
             'category' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'period' => 'required|in:monthly,quarterly,yearly',
+            'period' => 'required|in:daily,weekly,monthly,quarterly,yearly',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string',
-            'status' => 'required|in:active,completed,cancelled',
+            'status' => 'required|in:active,closed',
         ]);
 
         $budget->update($validated);
@@ -95,20 +101,4 @@ class BudgetController extends Controller
             ->with('success', 'Budget deleted successfully.');
     }
 
-    public function track(Budget $budget)
-    {
-        // after performing a transaction tied to a specified budget
-        $remainigAmount = $budget->remaining_amount;
-
-        // calculation to get current budget limit progress.
-        $progressPercentage = $budget->progress_percentage;
-
-
-        $transactions = $budget->transactions()
-            ->orderBy('created_at', 'desc')
-            ->get();
-            
-        return view('budgets.track', compact('budget', 'transactions'));
-    }
-    
 }

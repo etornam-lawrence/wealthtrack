@@ -15,7 +15,7 @@
   <!-- Header -->
   <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50 animate-fadeInUp">
     <nav class="container mx-auto flex items-center justify-between p-6">
-      <a href="{{ route('home') }}" class="flex items-center transition transform hover:scale-105">
+      <a href="{{ route('dashboard') }}" class="flex items-center transition transform hover:scale-105">
         @auth
           <span class="ml-3 text-2xl font-bold text-gray-900 dark:text-gray-100">
             WealthTrack - {{ Auth::user()->first_name }}
@@ -27,6 +27,7 @@
       <div class="hidden lg:flex items-center space-x-8">
         @auth
           <x-nav-link href="{{ route('dashboard') }}" :active="request()->is('dashboard')">Dashboard</x-nav-link>
+          <x-nav-link href="/accounts" :active="request()->is('accounts')">Accounts</x-nav-link>
           <x-nav-link href="{{ route('savings.index') }}" :active="request()->is('savings')">Savings</x-nav-link>
           <x-nav-link href="{{ route('budgets.index') }}" :active="request()->is('budgets')">Budgets</x-nav-link>
           <x-nav-link href="{{ route('profile') }}" :active="request()->is('profile')">Profile</x-nav-link>
@@ -60,6 +61,7 @@
       @auth
         <x-nav-link href="{{ route('dashboard') }}" :active="request()->is('dashboard')">Dashboard</x-nav-link>
         <x-nav-link href="{{ route('savings.index') }}" :active="request()->is('savings')">Savings</x-nav-link>
+        <x-nav-link href="/accounts" :active="request()->is('accounts')">Accounts</x-nav-link>
         <x-nav-link href="{{ route('budgets.index') }}" :active="request()->is('budgets')">Budgets</x-nav-link>
         <x-nav-link href="{{ route('profile') }}" :active="request()->is('profile')">Profile</x-nav-link>
         <x-nav-link href="{{ route('help') }}" :active="request()->is('help')">Help</x-nav-link>

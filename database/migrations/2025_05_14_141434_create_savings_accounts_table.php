@@ -12,16 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('savings_accounts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('alias')->unique();
             $table->string('account_number')->unique();
-            $table->string('account_type');
             $table->decimal('balance', 15, 2)->default(0);
-            $table->string('email')->unique();
-            $table->string('password');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('savings_account');
     }
 };

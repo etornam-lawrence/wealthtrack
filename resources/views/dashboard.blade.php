@@ -20,7 +20,7 @@
         <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Navigation</h2>
         <nav>
           <ul class="space-y-4">
-            @foreach (['accounts' => 'Accounts', 'budgets' => 'Budgets', 'savings' => 'Savings'] as $route => $label)
+            @foreach (['accounts' => 'Accounts', 'budgets' => 'Budgets', 'savings' => 'Savings Plan'] as $route => $label)
               <li>
                 <a href="/{{ $route }}" class="block px-4 py-2 rounded text-gray-800 dark:text-gray-100 hover:bg-indigo-600 hover:text-white transition">
                   {{ $label }}
@@ -35,7 +35,7 @@
       <main class="col-span-3">
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          @foreach ([['Total Expenses', $totalExpenses], ['Budget Utilization', 'Budgets: ' . $budget->count()], ['Savings', $totalSavings]] as [$title, $value])
+          @foreach ([['Total Expenses (Withdrawals)', $totalExpenses], ['Budget Utilization', 'Budgets: ' . $budget->count()], ['Savings', $totalSavings]] as [$title, $value])
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
               <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{{ $title }}</h3>
               <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ $value }}</p>
@@ -46,7 +46,7 @@
         <!-- Recent Transactions -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Recent Transactions</h3>
+            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Recent Transactions <small class="font-medium">(For current accounts only)</small></h3>
             <a href="/transactions" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
               View All
             </a>
@@ -70,7 +70,7 @@
                         <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ $transaction->created_at }}</td>
                         <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ $transaction->description }}</td>
                         <td class="px-4 py-2 text-gray-800 dark:text-gray-300">
-                          <a href="{{ route('accounts.show', $account->id) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                          <a href="{{ route('accounts.current.show', $account->id) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
                             {{ $account->account_number }}
                           </a>
                         </td>
@@ -90,7 +90,7 @@
         <div class="mt-6 flex justify-end">
           @if ($accounts->count() > 0)
             <a href="/transactions/create" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition text-sm">
-              Add New Transaction
+              Top Up/Withdraw
             </a>
           @else
             <p class="text-gray-500 dark:text-gray-400">No accounts available. Please create an account to add transactions.</p>

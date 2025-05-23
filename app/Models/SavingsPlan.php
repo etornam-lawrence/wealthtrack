@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Savings extends Model
+class SavingsPlan extends Model
 {
     /** @use HasFactory<\Database\Factories\SavingsFactory> */
     use HasFactory, HasUuids;
 
     protected $fillable = [
         'user_id',
-        'account_id',
+        'savings_account_id',
         'planName',
         'desiredAmount',
         'status',
@@ -31,32 +31,23 @@ class Savings extends Model
         'amount_per_interval' => 'decimal:2',
         'start_date' => 'date',
         'end_date' => 'date',
-        'automatic' => 'boolean',
+        'id' => 'string',
     ];
-
-    public static function validationRules($id = null)
-    {
-        return [
-            'planName' => 'required|string|max:255',
-            'desiredAmount' => 'required|numeric|gt:0|max:999999999.99',
-            'amount_per_interval' => 'nullable|numeric|gt:0|max:999999999.99',
-            'regularity' => 'required|in:daily,weekly,biweekly,monthly,quarterly,yearly',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'automatic' => 'boolean',
-            'description' => 'nullable|string|max:1000',
-        ];
-    }
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function account()
+    public function current_account()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(CurrentAccount::class, 'current_account_id');
     }
+
+    public function savings_account()
+    {
+        return $this->belongsTo(SavingsAccount::class, 'savings_account_id');
+    }   
 
     protected $appends = ['amount_saved', 'progress', 'remaining_amount', 'days_remaining'];
 

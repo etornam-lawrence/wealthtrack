@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
 
 return new class extends Migration
 {
@@ -11,14 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('current_accounts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('current_account_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignUuid('budget_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->decimal('amount', 10, 2);
-            $table->string('transaction_type');
-            $table->string('description');
+            $table->string('alias')->unique();
+            $table->string('account_number')->unique();
+            $table->decimal('balance', 15, 2)->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('current_accounts');
     }
-}; 
+};

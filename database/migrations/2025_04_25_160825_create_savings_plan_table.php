@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('savings', function (Blueprint $table) {
+        Schema::create('savings_plans', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('account_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('savings_account_id')->constrained()->cascadeOnDelete();
             $table->string('planName');
             $table->decimal('desiredAmount', 12, 2); 
             $table->enum('regularity', ['daily', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly']);
@@ -23,7 +23,6 @@ return new class extends Migration
             $table->date('end_date');
             $table->decimal('savedAmount', 12, 2)->default(0);
             $table->enum('status', ['active', 'paused', 'completed'])->default('active');
-            $table->boolean('automatic')->default(false);
             $table->text('description')->nullable();
         
             $table->timestamps();

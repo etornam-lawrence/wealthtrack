@@ -29,7 +29,7 @@
 
   <!-- Savings Plans Section -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    @if ($savings->isEmpty())
+    @if ($savings->count() === 0 )
       <div class="text-center py-10">
         <p class="text-lg text-gray-500 dark:text-gray-400">
           You currently have no savings plans.<br>Start by creating one!

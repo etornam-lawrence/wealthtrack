@@ -50,21 +50,21 @@
         </div>
   
         <div>
-          <x-form-label for="account_id">Select Account</x-form-label>
+          <x-form-label for="savings_account_id">Select Account <small>(Only change to link to a new account)</small></x-form-label>
           <select 
-            name="account_id" 
-            id="account_id" 
+            name="savings_account_id" 
+            id="savings_account_id" 
             required
-            class="w-full rounded-md border-gray-300 @error('account_id') border-red-500 @enderror"
+            class="w-full rounded-md border-gray-300 @error('savings_account_id') border-red-500 @enderror"
           >
             <option value="">Choose an account</option>
             @foreach ($accounts as $account)
-              <option value="{{ $account->id }}" {{ (old('account_id', $savings->account_id) == $account->id) ? 'selected' : '' }}>
+              <option value="{{ $account->id }}" {{ (old('savings_account_id', $savings->savings_account_id) == $account->id) ? 'selected' : '' }}>
                 {{ $account->account_number }} (Balance: ₵{{ number_format($account->balance, 2) }})
               </option>
             @endforeach
           </select>
-          <x-form-error name="account_id"></x-form-error>
+          <x-form-error name="savings_account_id"></x-form-error>
         </div>
   
         <div>
@@ -83,21 +83,7 @@
           <x-form-error name="desiredAmount"></x-form-error>
         </div>
 
-        <div>
-          <x-form-label for="savedAmount">Amount Saved So Far (₵)</x-form-label>
-          <x-form-input 
-            type="number" 
-            name="savedAmount" 
-            id="savedAmount" 
-            step="0.01" 
-            min="0"
-            max="999999999.99"
-            value="{{ old('savedAmount', $savings->savedAmount) }}" 
-            required 
-            class="@error('savedAmount') border-red-500 @enderror"
-          />
-          <x-form-error name="savedAmount"></x-form-error>
-        </div>
+        
 
         <div>
           <x-form-label for="status">Status</x-form-label>
@@ -111,7 +97,7 @@
             <option value="paused" {{ old('status', $savings->status) == 'paused' ? 'selected' : '' }}>Paused</option>
           </select>
           <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
-            Note: To mark a savings plan as completed, reach your target amount
+            Note: To mark a savings plan as completed, reach your target amount.
           </p>
           <x-form-error name="status"></x-form-error>
         </div>
@@ -179,24 +165,7 @@
           <x-form-error name="end_date"></x-form-error>
         </div>
   
-        <div>
-          <x-form-label for="automatic">Automatic Saving</x-form-label>
-          <label class="inline-flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              name="automatic" 
-              id="automatic" 
-              value="1" 
-              {{ old('automatic', $savings->automatic) ? 'checked' : '' }}
-              class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-            >
-            <span class="text-gray-700 dark:text-gray-300">Enable automatic savings</span>
-          </label>
-          <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
-            When enabled, the specified amount will be automatically saved at the chosen interval
-          </p>
-          <x-form-error name="automatic"></x-form-error>
-        </div>
+        
   
         <div>
           <x-form-label for="description">Description (optional)</x-form-label>
@@ -205,7 +174,7 @@
             id="description" 
             rows="4" 
             maxlength="1000"
-            class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-gray-100 @error('description') border-red-500 @enderror"
+            class="w-full rounded-md px-2 border-gray-300 dark:bg-gray-700 dark:text-gray-100 @error('description') border-red-500 @enderror"
           >{{ old('description', $savings->description) }}</textarea>
           <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
             Maximum 1000 characters

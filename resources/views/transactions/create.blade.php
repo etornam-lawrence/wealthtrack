@@ -15,7 +15,7 @@
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">New Transaction</h2>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">New Transaction <small style="font-size: 10px;">(For Current Accounts Only!)</small></h2>
       <form action="{{ route('transactions.store') }}" method="POST" class="space-y-6">
         @csrf
         <input type="hidden" name="user_id" value="{{ auth()->id() }}">
@@ -35,21 +35,22 @@
         <x-form-error name="amount" />
 
         <x-form-select
-                    name="account_id"
+                    name="current_account_id"
                     label="Select Account"
                     :options="$accounts->mapWithKeys(function($account) {
-                        return [$account->id => $account->first_name . ' - ' . $account->account_number];
+                        return [$account->id => $account->alias . ' - ' . $account->account_number];
                     })"
                     required
-                    :error="$errors->first('account_id')"
+                    :error="$errors->first('current_account_id')"
                 />
-
+                    
         <x-form-select
           name="budget_id"
-          label="Budget (Optional)"
+          label="Budget (Optional: Only use for withdrawals)." 
           :options="$budgets->pluck('category', 'id')"
           :error="$errors->first('budget_id')"
         />
+        
 
         <x-form-select
           name="transaction_type"

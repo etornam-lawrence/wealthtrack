@@ -17,115 +17,81 @@ const countryCodes = {
     'Niger': '+227'
 };
 
-// Function to format phone number
-function formatPhoneNumber(number) {
-    // Remove all non-digit characters
-    const digits = number.replace(/\D/g, '');
-    
-    // Limit to 9 digits (excluding country code)
-    const limitedDigits = digits.slice(0, 9);
-    
-    // Format into groups of 3
-    return `${limitedDigits.slice(0, 3)} ${limitedDigits.slice(3, 6)} ${limitedDigits.slice(6, 9)}`;
+// Normalize and extract digits only
+function extractDigits(value) {
+    return value.replace(/\D/g, '');
 }
 
-// Function to update phone number with country code
+// Format number as xxx xxx xxx
+function formatLocalNumber(digits) {
+    const sliced = digits.slice(0, 9);
+    return `${sliced.slice(0, 3)} ${sliced.slice(3, 6)} ${sliced.slice(6, 9)}`.trim();
+}
+
+// Apply full formatting with country code
+function formatPhoneNumber(rawNumber, selectedCountry) {
+    const digits = extractDigits(rawNumber);
+
+    // Strip existing country code if present
+    const code = countryCodes[selectedCountry] || '';
+    const cleanedDigits = digits.startsWith(code.replace('+', '')) ? digits.slice(code.length - 1) : digits;
+
+    const localNumber = formatLocalNumber(cleanedDigits);
+    return code + ' ' + localNumber;
+}
+
+// Event: update phone number when country changes
 function updatePhoneNumber() {
     const locationSelect = document.getElementById('location');
     const phoneInput = document.getElementById('phone');
     
     if (locationSelect && phoneInput) {
         const selectedCountry = locationSelect.options[locationSelect.selectedIndex].text;
-        const countryCode = countryCodes[selectedCountry] || '';
-        
-        // Get current phone number without country code
-        let currentNumber = phoneInput.value;
-        if (currentNumber.startsWith('+')) {
-            // Remove the current country code and any spaces
-            currentNumber = currentNumber.substring(4).replace(/\s/g, '');
-        }
-        
-        // Format and update phone number with new country code
-        const formattedNumber = formatPhoneNumber(currentNumber);
-        phoneInput.value = countryCode + ' ' + formattedNumber;
+        const formatted = formatPhoneNumber(phoneInput.value, selectedCountry);
+        phoneInput.value = formatted;
     }
 }
 
-// Function to validate phone number input
+// Validate input: clean up and enforce formatting
 function validatePhoneInput(event) {
     const phoneInput = event.target;
-    let value = phoneInput.value;
-    
-    // Remove all non-digit characters except plus sign
-    value = value.replace(/[^\d+]/g, '');
-    
-    // Ensure only one plus sign at the start
-    if (value.includes('+')) {
-        value = '+' + value.replace(/\+/g, '');
-    }
-    
-    // Limit to 12 digits total (3 for country code + 9 for number)
-    if (value.length > 12) {
-        value = value.slice(0, 12);
-    }
-    
-    // Update the input value
-    phoneInput.value = value;
+    const digits = extractDigits(phoneInput.value);
+
+    // Keep max 12 digits (country + 9-digit number)
+    const trimmed = digits.slice(0, 12);
+
+    // Allow user to continue typing; formatting happens on blur
+    phoneInput.value = trimmed;
 }
 
-// Function to initialize phone number
+// On load: set correct country based on existing phone number
 function initializePhoneNumber() {
     const locationSelect = document.getElementById('location');
     const phoneInput = document.getElementById('phone');
-    
+
     if (locationSelect && phoneInput) {
-        // If phone number already exists, extract the country code
-        if (phoneInput.value) {
-            const currentValue = phoneInput.value;
-            const countryCode = currentValue.substring(0, 4); // Get the first 4 characters (e.g., +233)
-            
-            // Find the country that matches this code
-            for (const [country, code] of Object.entries(countryCodes)) {
-                if (code === countryCode) {
-                    // Find the option with matching text
-                    for (let i = 0; i < locationSelect.options.length; i++) {
-                        if (locationSelect.options[i].text === country) {
-                            locationSelect.selectedIndex = i;
-                            break;
-                        }
+        const currentValue = phoneInput.value.replace(/\s+/g, '');
+        
+        for (const [country, code] of Object.entries(countryCodes)) {
+            if (currentValue.startsWith(code)) {
+                for (let i = 0; i < locationSelect.options.length; i++) {
+                    if (locationSelect.options[i].text === country) {
+                        locationSelect.selectedIndex = i;
+                        break;
                     }
-                    break;
                 }
+                break;
             }
         }
-        
-        // Add event listeners
-        locationSelect.addEventListener('change', function() {
-            // Get the phone number without the current country code
-            let currentNumber = phoneInput.value;
-            if (currentNumber.startsWith('+')) {
-                currentNumber = currentNumber.substring(4).replace(/\s/g, '');
-            }
-            
-            // Update the phone number with the new country code
-            const selectedCountry = locationSelect.options[locationSelect.selectedIndex].text;
-            const countryCode = countryCodes[selectedCountry] || '';
-            const formattedNumber = formatPhoneNumber(currentNumber);
-            phoneInput.value = countryCode + ' ' + formattedNumber;
-        });
-        
+
+        locationSelect.addEventListener('change', updatePhoneNumber);
         phoneInput.addEventListener('input', validatePhoneInput);
         phoneInput.addEventListener('blur', updatePhoneNumber);
-        
-        // Set maxlength attribute to prevent typing more than needed
-        phoneInput.setAttribute('maxlength', '12');
-        
-        // Trigger initial update if there's a value
+
         if (phoneInput.value) {
             updatePhoneNumber();
         }
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializePhoneNumber); 
+document.addEventListener('DOMContentLoaded', initializePhoneNumber);

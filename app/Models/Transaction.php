@@ -17,7 +17,7 @@ class Transaction extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'account_id',
+        'current_account_id',
         'amount',
         'transaction_type',
         'description',
@@ -53,9 +53,14 @@ class Transaction extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function account()
+    public function current_account()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(CurrentAccount::class , 'current_account_id');
+    }
+
+    public function savings_account()
+    {
+        return $this->belongsTo(SavingsAccount::class , 'current_account_id');
     }
 
     public function budget()

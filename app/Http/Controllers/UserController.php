@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Transaction;
-use App\Models\Savings;
-use App\Models\Review;
+use App\Models\SavingsPlan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -20,19 +19,11 @@ class UserController extends Controller
     public function index()
     {
         try {
-        $user = Auth::user();
-        $accounts = $user->accounts()->with('transactions')->get();
-        $budget = $user->budgets;
-        $totalExpenses = Transaction::where('user_id', $user->id)
-            ->where('transaction_type', 'withdrawal')
-            ->sum('amount');
-        $totalSavings = Savings::where('user_id', $user->id)->sum('savedAmount');
-        $transactions = $accounts->flatMap(function ($account) {
-            return $account->transactions;
-        })->sortByDesc('created_at')->values();
+            $user = Auth::user();
+            return view('customer.profile', compact('user'));
 
-            return view('customer.profile', compact('user', 'accounts', 'transactions', 'budget', 'totalExpenses', 'totalSavings'));
         } catch (\Exception $e) {
+            // return $e;
             return redirect()->route('dashboard')->with('error', 'An error occurred while loading your profile.');
         }
     }
@@ -41,24 +32,50 @@ class UserController extends Controller
      * Display the user's dashboard
      */
     public function dashboard()
-    {
-        try {
+{
+    try {
         $user = Auth::user();
-        $accounts = $user->accounts()->with('transactions')->get();
-        $budget = $user->budgets;
-        $totalExpenses = Transaction::where('user_id', $user->id)
-            ->where('transaction_type', 'withdrawal')
-            ->sum('amount');
-        $totalSavings = Savings::where('user_id', $user->id)->sum('savedAmount');
+
+        // Fetch accounts separately
+        $accounts = $user->currentAccounts()->with('transactions')->get();
+
+        // Merge all transactions from both account types
         $transactions = $accounts->flatMap(function ($account) {
             return $account->transactions;
         })->sortByDesc('created_at')->values();
 
-            return view('dashboard', compact('user', 'accounts', 'transactions', 'budget', 'totalExpenses', 'totalSavings'));
-        } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'An error occurred while loading your dashboard.');
-        }
+        // Get budget only for current accounts
+        $budget = $user->budgets;
+
+        // Total expenses from all accounts
+        $totalExpenses = Transaction::where(function ($query) use ($user) {
+            $query->whereHas('current_account', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->orWhereHas('savings_account', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        })->where('transaction_type', 'withdrawal')->sum('amount');
+
+        // Total savings (sum of saved_amount from all savings plans)
+        $totalSavings = SavingsPlan::whereHas('savings_account', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->sum('savedAmount');
+
+        return view('dashboard', compact(
+            'user',
+            'accounts',
+            'transactions',
+            'budget',
+            'totalExpenses',
+            'totalSavings'
+        ));
+
+    } catch (\Exception $e) {
+        return $e;
+        // return redirect()->route('login')->with('error', 'An error occurred while loading your dashboard.');
     }
+}
+
 
     /**
      * Show the review form

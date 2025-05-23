@@ -69,3 +69,19 @@ BUDGET DONE
 
 Currently we're doing user profile with crud abilities, automated savings deductions(laravel tasks)
 Leaving reviews by users = DONE
+
+
+
+create an accounts table to link all account types for better referencing in performing transactions
+
+User selects which account (savings or current) they want to transact on.
+
+They pick top-up or withdrawal.
+
+The backend updates the balance accordingly and creates a transaction record.
+
+Transactions are filtered per account.
+
+All using a single accounts table with an account_type field and one transactions table.
+
+fix form input; use the right directives per the account type

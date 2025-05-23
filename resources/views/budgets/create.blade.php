@@ -33,7 +33,7 @@
 
         <form action="{{ route('budgets.store') }}" method="POST" class="space-y-6">
             @csrf
-            
+            <x-form-input name="user_id" type="hidden" value="{{ $user->id }}" />
             <x-form-select
                 name="category"
                 label="Category"
@@ -57,14 +57,14 @@
             />
 
             <x-form-select
-                name="account_id"
+                name="current_account_id"
                 label="Account"
                 :options="$accounts->mapWithKeys(function($account) {
-                    return [$account->id => $account->name . ' - ' . $account->account_number];
+                    return [$account->id => $account->alias . ' - ' . $account->account_number];
                 })"
                 required
-                :error="$errors->first('account_id')"
-                :selected="old('account_id')"
+                :error="$errors->first('current_account_id')"
+                :selected="old('current_account_id')"
             />
 
             <div>

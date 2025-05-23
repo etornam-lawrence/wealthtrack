@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('savings_transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('savings_account_id')->constrained('savings_accounts')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('current_account_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignUuid('budget_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->decimal('amount', 10, 2);
-            $table->string('transaction_type');
-            $table->string('description');
+            $table->decimal('amount', 12, 2);
+            $table->enum('type', ['deposit', 'withdrawal']);
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('savings_transactions');
     }
-}; 
+};

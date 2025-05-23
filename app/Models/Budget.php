@@ -13,10 +13,10 @@ class Budget extends Model
     
     protected $fillable = [
         'user_id',
-        'account_id',
+        'current_account_id',
         'category',
         'amount',
-        'period', // monthly, quarterly, yearly
+        'period',
         'start_date',
         'end_date',
         'description',
@@ -36,7 +36,7 @@ class Budget extends Model
 
     public function account()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(CurrentAccount::class);
     }
 
     public function transactions()
@@ -44,15 +44,20 @@ class Budget extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function currentAccount()
+    {
+        return $this->belongsTo(CurrentAccount::class, 'current_account_id');
+    }
+
     public function getRemainingAmountAttribute()
     {
-        $spent = $this->transactions()->sum('amount');
+        $spent = $this->transactions()->where('transaction_type', 'withdrawal')->sum('amount');
         return $this->amount - $spent;
     }
 
     public function getProgressPercentageAttribute()
     {
         if ($this->amount == 0) return 0;
-        return ($this->transactions()->sum('amount') / $this->amount) * 100;
+        return ($this->transactions()->where('transaction_type', 'withdrawal')->sum('amount') / $this->amount) * 100;
     }
 }

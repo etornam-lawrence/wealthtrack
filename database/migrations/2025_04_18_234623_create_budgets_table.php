@@ -11,13 +11,14 @@ return new class extends Migration
         Schema::create('budgets', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('current_account_id')->constrained('current_accounts')->cascadeOnDelete();
             $table->string('category');
             $table->decimal('amount', 10, 2);
-            $table->enum('period', ['monthly', 'quarterly', 'yearly']);
+            $table->enum('period', ['daily','weekly','monthly', 'quarterly', 'yearly']);
             $table->date('start_date');
             $table->date('end_date');
             $table->text('description')->nullable();
-            $table->enum('status', ['active', 'completed', 'cancelled'])->default('active');
+            $table->enum('status', ['active', 'completed', 'closed'])->default('active');
             $table->timestamps();
         });
     }
