@@ -14,7 +14,7 @@
 
   <!-- Header -->
   <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50 animate-fadeInUp">
-    <nav class="container mx-auto flex items-center justify-between p-6">
+    <nav class="container mx-auto flex items-center justify-between px-4 py-3 lg:px-6 lg:py-4">
       <a href="{{ route('dashboard') }}" class="flex items-center transition transform hover:scale-105">
         @auth
           <span class="ml-3 text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -24,7 +24,7 @@
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-center space-x-8">
+      <div class="hidden lg:flex items-center space-x-4 lg:space-x-8">
         @auth
           <x-nav-link href="{{ route('dashboard') }}" :active="request()->is('dashboard')">Dashboard</x-nav-link>
           <x-nav-link href="/accounts" :active="request()->is('accounts')">Accounts</x-nav-link>
@@ -40,8 +40,8 @@
 
         @guest
           <x-nav-link href="{{ route('home') }}" :active="request()->is('home')">Home</x-nav-link>
-          <x-nav-link href="{{ route('login') }}">Login</x-nav-link>
-          <x-nav-link href="{{ route('register') }}">Register</x-nav-link>
+          <x-nav-link href="{{ route('login') }}" :active="request()->is('login')">Login</x-nav-link>
+          <x-nav-link href="{{ route('register') }}" :active="request()->is('register')">Register</x-nav-link>
         @endguest
       </div>
 
@@ -57,7 +57,7 @@
     </nav>
 
     <!-- Mobile Navigation Menu -->
-    <div id="mobileMenu" class="lg:hidden hidden px-6 pb-4">
+    <div id="mobileMenu" class="lg:hidden hidden px-4 py-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
       @auth
         <x-nav-link href="{{ route('dashboard') }}" :active="request()->is('dashboard')">Dashboard</x-nav-link>
         <x-nav-link href="{{ route('savings.index') }}" :active="request()->is('savings')">Savings</x-nav-link>
@@ -83,7 +83,7 @@
   <!-- Session Messages -->
   @if (session('success'))
     <div class="fixed top-20 right-4 z-50 animate-fadeInUp">
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg" role="alert">
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-md mx-4" role="alert">
         <div class="flex items-center">
           <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -96,7 +96,7 @@
 
   @if (session('error'))
     <div class="fixed top-20 right-4 z-50 animate-fadeInUp">
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg" role="alert">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg max-w-md mx-4" role="alert">
         <div class="flex items-center">
           <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
